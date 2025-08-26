@@ -16,9 +16,9 @@
       --card:#ffffffcc;
       --accent:#ff4dcb; /* 亮粉 */
       /* 皇冠位置/大小（可根据屏幕微调） */
-      --crown-x: 40vw;    /* 越大越靠右 */
-      --crown-y: 20vh;    /* 越大越靠下 */
-      --crown-size: clamp(80px,10vw,140px);
+      --crown-x: 45vw;    /* 越大越靠右 */
+      --crown-y: 18vh;    /* 越大越靠下 */
+      --crown-size: clamp(160px, 20vw, 280px);
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
@@ -56,7 +56,7 @@
       box-shadow: 0 18px 48px rgba(0,0,0,.22);
       text-align:center;
       position: relative; z-index:1;
-      top: 30vh;            /* 桌面下移 */
+      top: 25vh;            /* 桌面下移 */
       transform: none !important;
     }
 
@@ -81,8 +81,12 @@
     /* 皇冠（透明 SVG） */
     #crown{ position:fixed; left:var(--crown-x); top:-20vh; transform:translateX(-50%);
       width:var(--crown-size); height:auto; opacity:0; z-index:6; pointer-events:none;
-      filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
-    #crown svg{ display:block; width:100%; height:auto; }
+      filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); 
+      transform: translateX(-50%) rotate(-10deg);}
+    #crown svg{
+      transform: scaleY(1.5);
+      transform-origin: 50% 85%; /* 以皇冠下沿附近为轴心，可微调 80%~90% */
+    }
 
     @media (max-width:600px){
       :root{ --crown-y:46vh; --crown-x:50vw; }
@@ -139,10 +143,10 @@
         crown.style.opacity='1';
         crown.addEventListener('transitionend',()=>{
           crown.animate([
-            { transform:'translateX(-50%) translateY(0) rotate(0deg)' },
-            { transform:'translateX(-50%) translateY(-6px) rotate(-6deg)' },
-            { transform:'translateX(-50%) translateY(0) rotate(0deg)' }
-          ],{ duration:450, easing:'ease-in-out' });
+            { transform:'translateX(-50%) translateY(0) rotate(-10deg)' },
+            { transform:'translateX(-50%) translateY(-6px) rotate(-16deg)' },
+            { transform:'translateX(-50%) translateY(0) rotate(-10deg)' }
+          ], { duration: 450, easing:'ease-in-out' });
         }, { once:true });
       }
       crownBtn.addEventListener('click', dropCrown);
@@ -159,4 +163,5 @@
   </script>
 </body>
 </html>
+
 
