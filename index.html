@@ -87,10 +87,46 @@
     /* 彩带画布（置顶显示，不拦截点击） */
     canvas#confetti{ position:fixed; inset:0; z-index:7; pointer-events:none; }
 
-    @media (max-aspect-ratio: 3/4){
-      :root{ --crown-y:14dvh; --crown-x:47vw; }
-      .card{ top:24dvh; }
+  @media (max-width: 600px){
+    /* 标题更小、更紧凑且更聪明换行 */
+    h1{
+      font-size: clamp(26px, 8vw, 36px);
+      line-height: 1.12;
+      text-wrap: balance;
     }
+  
+    /* 正文/名单更小一点 */
+    .msg{
+      font-size: clamp(13px, 3.6vw, 16px);
+      line-height: 1.5;
+      margin: 10px auto 14px;
+      max-width: 90vw; /* 放宽行宽，避免太快换行 */
+    }
+  
+    /* 按钮更紧凑 */
+    .buttons{ gap: 8px; }
+    button{
+      padding: 10px 14px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+  
+    /* 卡片内边距略收紧；如果仍挡到就把 top 再调大一点 */
+    .card{
+      width: 94vw;
+      padding: 18px 16px 16px;
+      /* 如需整体再往下：解除下一行注释并调大数值 */
+      /* top: 28dvh; */
+    }
+  
+    /* 皇冠在手机上也稍微小一点（不压到标题） */
+    :root{
+      --crown-size: clamp(90px, 13vw, 160px);
+      /* 你之前已设置了 --crown-x / --crown-y，如需再避让可在这里微调：
+         --crown-y: 16dvh;  --crown-x: 48vw;
+      */
+    }
+  }
   </style>
 </head>
 <body>
@@ -213,3 +249,4 @@
   </script>
 </body>
 </html>
+
