@@ -90,7 +90,7 @@
   @media (max-width: 600px){
     /* 标题更小、更紧凑且更聪明换行 */
     h1{
-      font-size: clamp(26px, 8vw, 36px);
+      font-size: clamp(26px, 7vw, 36px);
       line-height: 1.12;
       text-wrap: balance;
     }
@@ -116,15 +116,14 @@
       width: 94vw;
       padding: 18px 16px 16px;
       /* 如需整体再往下：解除下一行注释并调大数值 */
-      /* top: 28dvh; */
+      top: 30dvh;
     }
   
     /* 皇冠在手机上也稍微小一点（不压到标题） */
     :root{
       --crown-size: clamp(90px, 13vw, 160px);
-      /* 你之前已设置了 --crown-x / --crown-y，如需再避让可在这里微调：
-         --crown-y: 16dvh;  --crown-x: 48vw;
-      */
+      --crown-y: 40dvh;  
+      --crown-x: 48vw;
     }
   }
   </style>
@@ -249,4 +248,5 @@
   </script>
 </body>
 </html>
+
 
