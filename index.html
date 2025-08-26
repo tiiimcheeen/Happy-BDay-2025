@@ -83,10 +83,7 @@
       width:var(--crown-size); height:auto; opacity:0; z-index:6; pointer-events:none;
       filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); 
       transform: translateX(-50%) rotate(-10deg);}
-    #crown svg{
-      transform: scaleY(1.5);
-      transform-origin: 50% 85%; /* 以皇冠下沿附近为轴心，可微调 80%~90% */
-    }
+    #crown svg{ display:block; width:100%; height:auto; }
 
     @media (max-width:600px){
       :root{ --crown-y:46vh; --crown-x:50vw; }
@@ -111,7 +108,7 @@
     <h1 id="title"> bb方，生日快乐！🎂</h1>
     <div class="buttons">
       <button id="confettiBtn" aria-label="点我为bb方带上皇冠">点我为bb方带上皇冠 👑</button>
-      <button class="secondary" id="revealBtn" aria-expanded="false">点我检阅bb方的所有称呼 😚</button>
+      <button class="secondary" id="revealBtn" aria-expanded="false">点我展示bb方的所有称号 😚</button>
     </div>
 
     <!-- 祝福与署名：默认隐藏，点击“检阅称呼”后显示 -->
@@ -163,5 +160,6 @@
   </script>
 </body>
 </html>
+
 
 
