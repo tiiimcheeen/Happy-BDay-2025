@@ -54,7 +54,6 @@
     }
 
     .card{
-      position:relative; z-index:1;
       width:min(820px, 92vw);
       background:var(--card);
       backdrop-filter: blur(6px);
@@ -62,7 +61,9 @@
       padding:28px 24px 22px;
       box-shadow: 0 18px 48px rgba(0,0,0,.22);
       text-align:center;
-      transform: translateY(-5vh); /* 文案靠上，避免挡住眼睛 */
+      position: relative;
+      top: 10vh;          /* 调大=更靠下；PC 先试 8~14vh */
+      transform: none !important;  /* 防止前面旧的 translateY 影响 */
     }
     h1{
       font-family:"ZCOOL KuaiLe","Noto Serif SC", serif;
@@ -93,20 +94,26 @@
     .footer{margin-top:16px;font-size:14px;color:#555}
     canvas#confetti{position:fixed;inset:0;z-index:0;pointer-events:none}
     
+  :root{ --crown-x:52vw; --crown-y:42vh; --crown-size:clamp(80px,10vw,140px); }
+  #crown{ position:fixed; left:var(--crown-x); top:-20vh; transform:translateX(-50%); width:var(--crown-size); height:auto; opacity:0; z-index:6; pointer-events:none; filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+  #crown svg{ display:block; width:100%; height:auto; }
+  @media (max-width: 600px){ :root{ --crown-y:46vh; --crown-x:50vw; }, .card{ top: 14vh; } /* 手机再低一点 */ }
+    
   </style>
 </head>
 <body>
   <canvas id="confetti"></canvas>
-  <img id="crown" src="crown.png" alt="皇冠" style="
-    position:fixed;
-    top:-150px; /* 从屏幕外上方开始 */
-    left:50%;
-    transform:translateX(-50%);
-    width:120px; /* 大小可调 */
-    opacity:0;
-    z-index:5;
-    pointer-events:none;
-  ">
+  <!-- 皇冠（透明SVG，无底） -->
+  <div id="crown" aria-hidden="true">
+    <svg viewBox="0 0 512 320" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32 256 L128 80 L256 208 L384 80 L480 256 Z" fill="#FFC83D" stroke="#C68A00" stroke-width="16" stroke-linejoin="round"/>
+      <circle cx="128" cy="80" r="24" fill="#FFD86B" stroke="#C68A00" stroke-width="12"/>
+      <circle cx="384" cy="80" r="24" fill="#FFD86B" stroke="#C68A00" stroke-width="12"/>
+      <circle cx="256" cy="64" r="28" fill="#FFD86B" stroke="#C68A00" stroke-width="12"/>
+      <rect x="64" y="256" width="384" height="40" rx="12" fill="#F0B90B" stroke="#C68A00" stroke-width="12"/>
+      <polygon points="256,168 224,224 288,224" fill="#FF9D4D" stroke="#C06800" stroke-width="10" stroke-linejoin="round"/>
+    </svg>
+  </div>
   <main class="card" role="main" aria-labelledby="title">
     <h1 id="title">🎂 bb方，生日快乐！🎂</h1>
     <div class="buttons">
@@ -120,7 +127,7 @@
     💖 致以最热烈的生日祝贺！💖
     </div>
 
-    <div class="footer"；color:#fff>— 来自爱bb方的金毛</div>
+    <div class="footer" style="color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6);">— 来自爱bb方的金毛</div>
   </main>
   
 
@@ -186,6 +193,7 @@
   </script>
 </body>
 </html>
+
 
 
 
