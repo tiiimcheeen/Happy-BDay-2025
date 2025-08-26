@@ -30,11 +30,12 @@
     body::before{
       content:"";
       position:fixed; inset:0; z-index:-1;
-      /* 居中偏下：Y 轴 68% 可微调为 60%~80% */
-      background: url('bg.jpg') center 68% / contain no-repeat;
+      /* 居中偏下显示裁剪重心，可调 70%~85% */
+      background: url('bg.jpg') center 78% / contain no-repeat;
       /* 多圈顺时针旋转一次后静止 */
       animation: spinIn 2.2s ease-out 1 both;
       transform-origin:center;
+      pointer-events:none; /* 不拦截点击 */
     }
 
     /* 轻柔遮罩，避免文字被抢（可调透明度） */
@@ -42,10 +43,10 @@
       content:"";
       position:fixed; inset:0; z-index:0;
       background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.15));
+      pointer-events:none; /* 不拦截点击 */
     }
 
     @keyframes spinIn{
-      /* 从 0 旋到 1440deg = 顺时针 4 圈，结束停住 */
       from{ transform:rotate(0deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
       to  { transform:rotate(1440deg) scale(1);    filter:none; }
     }
@@ -61,7 +62,7 @@
       padding:28px 24px 22px;
       box-shadow: 0 18px 48px rgba(0,0,0,.22);
       text-align:center;
-      transform: translateY(-10vh); /* 内容整体上移，避免挡住人物 */
+      transform: translateY(-16vh); /* 文案靠上，避免挡住眼睛 */
     }
     h1{
       font-family:"ZCOOL KuaiLe","Noto Serif SC", serif;
@@ -98,15 +99,15 @@
   <canvas id="confetti"></canvas>
   <main class="card" role="main" aria-labelledby="title">
     <h1 id="title">bb方，生日快乐！🎂💖</h1>
-    <p class="subtitle">A little surprise at midnight ✨</p>
-
     <div class="buttons">
-      <button id="confettiBtn" aria-label="点我放彩带">点我放彩带 🎊</button>
-      <button class="secondary" id="revealBtn" aria-expanded="false">点我检阅bb方的所有称呼 💌</button>
+      <button id="confettiBtn" aria-label="点我为bb方带上皇冠">点我为bb方带上皇冠 👑</button>
+      <button class="secondary" id="revealBtn" aria-expanded="false">点我检阅bb方的所有称呼 😚</button>
     </div>
 
-    <div id="hidden" class="msg" style="display:none">
-      让我们向：bb方，double方，女王方，funny方，芳妮方，方funny，方芳妮，方Q，方皮蛋，方Queen，方bb，方女王，优秀b，香气b，美丽b 致以最热烈的生日祝贺！❤️
+    <div id="hidden" class="msg" style="display:none; text-align:center;">
+    让我们向：<br>
+    <strong>bb方</strong>， <strong>double方</strong>， <strong>女王方</strong>， <strong>funny方</strong>， <strong>芳妮方</strong>， <strong>方funny</strong>， <strong>方芳妮</strong>， <strong>方Q</strong>， <strong>方皮蛋</strong>， <strong>方Queen</strong>， <strong>方bb</strong>， <strong>方女王</strong>， <strong>优秀b</strong>， <strong>香气b</strong>， <strong>美丽b</strong><br>
+    致以最热烈的生日祝贺！❤️
     </div>
 
     <div class="footer">— 来自爱bb方的金毛</div>
