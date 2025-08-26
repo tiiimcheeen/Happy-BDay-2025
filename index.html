@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Noto+Serif+SC:wght@700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <!-- 预加载背景图，减少首屏等待/闪动 -->
+  <link rel="preload" as="image" href="bg.jpg">
   <style>
     :root{
       --bg1:#ffd1f3; /* 粉 */
@@ -29,12 +31,17 @@
       overflow:hidden;
     }
 
-    /* 背景照片用伪元素：保持比例、居中偏下；只旋转一次后静止 */
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
-      background: url('bg.jpg') center 78% / contain no-repeat;
-      animation: spinIn 2.2s ease-out 1 both; transform-origin:center;
+    /* ✅ 背景图改用 <img id="bg">，等解码后再开动画 */
+    #bg{
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: 50% 78%; /* 和原先 center 78% 一致，可微调 */
+      transform-origin: center;
     }
+    /* 只有 body 加了 .play 才开始旋转动画，避免未解码时错过动画 */
+    .play #bg{ animation: spinIn 2.2s ease-out 1 both; }
+
     /* 轻柔遮罩，让文字更清晰 */
     body::after{
       content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
@@ -87,48 +94,21 @@
     /* 彩带画布（置顶显示，不拦截点击） */
     canvas#confetti{ position:fixed; inset:0; z-index:7; pointer-events:none; }
 
-  @media (max-width: 600px){
-    /* 标题更小、更紧凑且更聪明换行 */
-    h1{
-      font-size: clamp(26px, 7vw, 36px);
-      line-height: 1.12;
-      text-wrap: balance;
+    /* 手机端微调尺寸/位置 */
+    @media (max-width: 600px){
+      h1{ font-size: clamp(26px, 7vw, 36px); line-height: 1.12; text-wrap: balance; }
+      .msg{ font-size: clamp(13px, 3.6vw, 16px); line-height: 1.5; margin: 10px auto 14px; max-width: 90vw; }
+      .buttons{ gap: 8px; }
+      button{ padding: 10px 14px; font-weight: 700; letter-spacing: .2px; }
+      .card{ width: 94vw; padding: 18px 16px 16px; top: 30dvh; }
+      :root{ --crown-size: clamp(90px, 13vw, 160px); --crown-y: 47dvh; --crown-x: 46vw; }
     }
-  
-    /* 正文/名单更小一点 */
-    .msg{
-      font-size: clamp(13px, 3.6vw, 16px);
-      line-height: 1.5;
-      margin: 10px auto 14px;
-      max-width: 90vw; /* 放宽行宽，避免太快换行 */
-    }
-  
-    /* 按钮更紧凑 */
-    .buttons{ gap: 8px; }
-    button{
-      padding: 10px 14px;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-  
-    /* 卡片内边距略收紧；如果仍挡到就把 top 再调大一点 */
-    .card{
-      width: 94vw;
-      padding: 18px 16px 16px;
-      /* 如需整体再往下：解除下一行注释并调大数值 */
-      top: 30dvh;
-    }
-  
-    /* 皇冠在手机上也稍微小一点（不压到标题） */
-    :root{
-      --crown-size: clamp(90px, 13vw, 160px);
-      --crown-y: 47dvh;  
-      --crown-x: 46vw;
-    }
-  }
   </style>
 </head>
 <body>
+  <!-- 背景图（等待解码后再播放旋转动画） -->
+  <img id="bg" src="bg.jpg" alt="" />
+
   <!-- 皇冠（透明SVG，无底） -->
   <div id="crown" aria-hidden="true">
     <svg viewBox="0 0 512 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="crown">
@@ -162,66 +142,48 @@
 
   <script>
     (function(){
+      // === 背景图解码后再开旋转 ===
+      const bg = document.getElementById('bg');
+      function startSpin(){ document.body.classList.add('play'); }
+      if (bg && 'decode' in bg) {
+        bg.decode().then(startSpin).catch(()=>{ if (bg.complete) startSpin(); });
+      } else if (bg && bg.complete) {
+        startSpin();
+      } else if (bg) {
+        bg.addEventListener('load', startSpin, { once:true });
+      }
+
       // ========== 彩带 ==========
       const canvas = document.getElementById('confetti');
       const ctx = canvas.getContext('2d');
       const COLORS = ['#ff4dff','#b366ff','#66b3ff','#ff99cc','#ffd166'];
       let W, H, parts = [], running = false;
-
-      function resize(){
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-      }
-      window.addEventListener('resize', resize, { passive:true });
-      resize();
-
+      function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      window.addEventListener('resize', resize, { passive:true }); resize();
       function spawn(n=220){
         for(let i=0;i<n;i++){
-          parts.push({
-            x: Math.random()*W,
-            y: -20 - Math.random()*H*0.2,
-            r: 4 + Math.random()*6,
-            vx: -2 + Math.random()*4,
-            vy: 2 + Math.random()*4,
-            color: COLORS[Math.floor(Math.random()*COLORS.length)],
-          });
+          parts.push({ x: Math.random()*W, y: -20 - Math.random()*H*0.2, r: 4 + Math.random()*6, vx: -2 + Math.random()*4, vy: 2 + Math.random()*4, color: COLORS[Math.floor(Math.random()*COLORS.length)], });
         }
       }
       function draw(){
         ctx.clearRect(0,0,W,H);
-        for(const p of parts){
-          ctx.fillStyle = p.color;
-          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-          p.x += p.vx; p.y += p.vy; p.vy += 0.02; // 轻微重力
-        }
+        for(const p of parts){ ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.x+=p.vx; p.y+=p.vy; p.vy+=0.02; }
         parts = parts.filter(p => p.y < H + 20);
         if(parts.length){ requestAnimationFrame(draw); } else { running = false; }
       }
-      function burst(){
-        spawn(220);
-        if(!running){ running = true; requestAnimationFrame(draw); }
-      }
+      function burst(){ spawn(220); if(!running){ running = true; requestAnimationFrame(draw); } }
 
       // ========== 皇冠掉落 ==========
       const crownBtn = document.getElementById('confettiBtn');
       const crown = document.getElementById('crown');
-
-      function cssVar(name, fallback){
-        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        return v || fallback;
-      }
-
+      function cssVar(name, fallback){ const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v || fallback; }
       function dropCrown(){
-        crown.style.transition='none';
-        crown.style.top='-20vh';
-        crown.style.opacity='0';
+        crown.style.transition='none'; crown.style.top='-20vh'; crown.style.opacity='0';
         void crown.offsetWidth; // 强制重绘
-
         crown.style.left = cssVar('--crown-x','50vw');
         crown.style.transition='top 1.1s cubic-bezier(.2,.8,.2,1), opacity .5s ease-in';
         crown.style.top = cssVar('--crown-y','40vh');
         crown.style.opacity='1';
-
         const onEnd = (e)=>{
           if(e.propertyName !== 'top') return; // 只在落到位那一刻
           crown.removeEventListener('transitionend', onEnd);
@@ -248,7 +210,3 @@
   </script>
 </body>
 </html>
-
-
-
-
