@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>bb方，生日快乐！</title>
-  <meta name="description" content="一份土味小惊喜，生日快乐！" />
+  <meta name="description" content=" 生日快乐！" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Noto+Serif+SC:wght@700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
@@ -97,6 +97,16 @@
 </head>
 <body>
   <canvas id="confetti"></canvas>
+  <img id="crown" src="crown.png" alt="皇冠" style="
+    position:fixed;
+    top:-150px; /* 从屏幕外上方开始 */
+    left:50%;
+    transform:translateX(-50%);
+    width:120px; /* 大小可调 */
+    opacity:0;
+    z-index:5;
+    pointer-events:none;
+  ">
   <main class="card" role="main" aria-labelledby="title">
     <h1 id="title">🎂 bb方，生日快乐！🎂</h1>
     <div class="buttons">
@@ -110,47 +120,60 @@
     💖 致以最热烈的生日祝贺！💖
     </div>
 
-    <div class="footer">— 来自爱bb方的金毛</div>
+    <div class="footer"；color:#fff>— 来自爱bb方的金毛</div>
   </main>
   
 
   <script>
     (function(){
-      const canvas = document.getElementById('confetti');
-      const ctx = canvas.getContext('2d');
-      let W, H, particles = [], running=false;
-      const colors = ['#ff4dff','#b366ff','#66b3ff','#ff99cc'];
-
-      function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-      window.addEventListener('resize', resize, {passive:true}); resize();
-
-      function spawn(n=160){
-        particles=[];
-        for(let i=0;i<n;i++){
-          particles.push({
-            x:Math.random()*W,
-            y:-20-Math.random()*H*0.3,
-            r:6+Math.random()*8,
-            color:colors[Math.floor(Math.random()*colors.length)],
-            vx:-2+Math.random()*4,
-            vy:2+Math.random()*4,
-            life:0
-          });
-        }
-      }
-      function draw(){
-        ctx.clearRect(0,0,W,H);
-        particles.forEach(p=>{
-          ctx.fillStyle=p.color;
-          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-          p.x+=p.vx; p.y+=p.vy; p.life++;
+        // —— 改成“掉落皇冠”效果 ——
+        const crownBtn = document.getElementById('confettiBtn'); // 你的按钮（已改成点我为bb方带上皇冠)
+        
+        // 动态创建皇冠元素（透明PNG）
+        const crown = document.createElement('img');
+        crown.id = 'crown';
+        crown.src = 'crown.png';       // 文件放和 index.html 同级
+        crown.alt = '皇冠';
+        Object.assign(crown.style, {
+          position: 'fixed',
+          top: '-20vh',                // 屏幕外上方起始
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '120px',              // 皇冠大小，按需调
+          opacity: '0',
+          zIndex: '5',
+          pointerEvents: 'none'
         });
-        particles = particles.filter(p=>p.y < H + 30);
-        if(particles.length && running){ requestAnimationFrame(draw); } else { running=false; }
-      }
-      function burst(){ spawn(); if(!running){ running=true; draw(); } }
-      window.addEventListener('load', burst);
-      document.getElementById('confettiBtn').addEventListener('click', burst);
+        document.body.appendChild(crown);
+        
+        function dropCrown() {
+          // 头顶位置（用 vh 兼容不同屏幕；可微调）
+          const HEAD_Y_VH = window.innerWidth < 600 ? 40 : 30; // 手机略低一点
+        
+          // 重置到起点
+          crown.style.transition = 'none';
+          crown.style.top = '-20vh';
+          crown.style.opacity = '0';
+          // 触发一次重绘，保证下面的过渡生效
+          void crown.offsetWidth;
+        
+          // 掉落动画
+          crown.style.transition = 'top 1.1s cubic-bezier(.2,.8,.2,1), opacity .5s ease-in';
+          crown.style.top = HEAD_Y_VH + 'vh';
+          crown.style.opacity = '1';
+        
+          // 落地轻微弹一下
+          crown.addEventListener('transitionend', () => {
+            crown.animate([
+              { transform:'translateX(-50%) translateY(0) rotate(0deg)' },
+              { transform:'translateX(-50%) translateY(-6px) rotate(-6deg)' },
+              { transform:'translateX(-50%) translateY(0) rotate(0deg)' }
+            ], { duration: 450, easing:'ease-in-out' });
+          }, { once:true });
+        }
+        
+        crownBtn.addEventListener('click', dropCrown);
+
 
       const revealBtn = document.getElementById('revealBtn');
       const hidden = document.getElementById('hidden');
@@ -163,5 +186,6 @@
   </script>
 </body>
 </html>
+
 
 
