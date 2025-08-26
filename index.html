@@ -40,12 +40,14 @@
       transform-origin: center;
       opacity: 0;                 /* 先隐藏，待就绪再淡入+旋转 */
       will-change: transform, opacity;
+      backface-visibility: hidden; /* 提示 GPU 合成 */
+      transform: translateZ(0);     /* 避免软件栈旋转带来的卡顿 */
     }
     /* 只有 body 加了 .play 才开始旋转动画，避免未解码时错过动画 */
     .play #bg{
       opacity: 1;
       transition: opacity .24s ease-out;
-      animation: spinIn 2.2s ease-out 1 both;
+      animation: spinIn 2s ease-out 1 both; /* 可在此调整时长 */
     }
 
     /* 轻柔遮罩，让文字更清晰 */
@@ -55,7 +57,10 @@
     }
 
     @keyframes spinIn{
-      from{ transform: rotate(-8deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      /* 从 -8° 开始，旋转满 4 圈后回到正向（=1440deg）*/
+      from{ transform: rotate(-8deg) scale(1.02) translateZ(0); }
+      to  { transform: rotate(1440deg) scale(1) translateZ(0); }
+    }
       to  { transform: rotate(1432deg) scale(1);  filter:none; } /* 4圈(1440) - 8° */
     }
       to  { transform:rotate(1440deg) scale(1);    filter:none; }
@@ -219,3 +224,4 @@
   </script>
 </body>
 </html>
+
