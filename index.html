@@ -36,11 +36,17 @@
       position: fixed; inset: 0; z-index: -1; pointer-events: none;
       width: 100%; height: 100%;
       object-fit: contain;
-      object-position: 50% 78%; /* 和原先 center 78% 一致，可微调 */
+      object-position: 50% 78%;
       transform-origin: center;
+      opacity: 0;                 /* 先隐藏，待就绪再淡入+旋转 */
+      will-change: transform, opacity;
     }
     /* 只有 body 加了 .play 才开始旋转动画，避免未解码时错过动画 */
-    .play #bg{ animation: spinIn 2.2s ease-out 1 both; }
+    .play #bg{
+      opacity: 1;
+      transition: opacity .24s ease-out;
+      animation: spinIn 2.2s ease-out 1 both;
+    }
 
     /* 轻柔遮罩，让文字更清晰 */
     body::after{
@@ -49,7 +55,9 @@
     }
 
     @keyframes spinIn{
-      from{ transform:rotate(0deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      from{ transform: rotate(-8deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      to  { transform: rotate(1432deg) scale(1);  filter:none; } /* 4圈(1440) - 8° */
+    }
       to  { transform:rotate(1440deg) scale(1);    filter:none; }
     }
 
@@ -142,18 +150,19 @@
 
   <script>
     (function(){
-      // === 背景图解码后再开旋转 ===
+      // === 背景图解码 & 应用方向后再开旋转 ===
       const bg = document.getElementById('bg');
-      function startSpin(){ document.body.classList.add('play'); }
-      if (bg && 'decode' in bg) {
-        bg.decode().then(startSpin).catch(()=>{ if (bg.complete) startSpin(); });
-      } else if (bg && bg.complete) {
-        startSpin();
-      } else if (bg) {
-        bg.addEventListener('load', startSpin, { once:true });
+      async function startWhenReady(img){
+        try{ if('decode' in img) await img.decode(); }catch(_){/* 忽略 decode 报错 */}
+        if(!img.complete || img.naturalWidth === 0){
+          await new Promise(res=> img.addEventListener('load', res, {once:true}));
+        }
+        await new Promise(res=> requestAnimationFrame(()=> requestAnimationFrame(res)));
+        document.body.classList.add('play');
       }
+      if(bg) startWhenReady(bg);
 
-      // ========== 彩带 ==========
+            // ========== 彩带 ==========
       const canvas = document.getElementById('confetti');
       const ctx = canvas.getContext('2d');
       const COLORS = ['#ff4dff','#b366ff','#66b3ff','#ff99cc','#ffd166'];
