@@ -8,23 +8,30 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg1:#ffdde1; /* 粉白 */
-      --bg2:#fbc2eb; /* 粉紫 */
+      --bg1:#ffd1f3; /* 粉 */
+      --bg2:#c7b5ff; /* 淡紫 */
+      --bg3:#b8e8ff; /* 淡蓝 */
       --card:#ffffffcc;
-      --accent:#ff4d6d;
+      --accent:#ff4dcb; /* 亮粉 */
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
     body{
       font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Helvetica Neue", Arial, "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji";
-      display:grid;place-items:center;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      background-size: 200% 200%;
+      display:grid; place-items:center;
+      /* 叠加樱花照 + 粉紫蓝渐变 */
+      background-image: linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3)), url('bg.jpg');
+      background-size: cover, 200% 200%;
+      background-position: center, 0% 50%;
+      background-attachment: fixed;
+      background-blend-mode: soft-light; /* 让色彩盖在照片上，字更清晰 */
       animation: bgMove 12s ease-in-out infinite;
       overflow:hidden;
     }
+
     @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
     .card{
@@ -39,11 +46,18 @@
       text-align:center;
     }
     h1{
-      font-family:"Noto Serif SC", serif;
-      font-size: clamp(36px, 6.2vw, 64px);
+      font-family:"ZCOOL KuaiLe","Noto Serif SC", serif;
+      font-size: clamp(40px, 7vw, 72px);
       margin:0 0 10px; color:#222;
       letter-spacing:1px;
+      text-shadow: 0 3px 0 rgba(255,255,255,.7), 0 6px 18px rgba(255,77,203,.35);
+      animation: wobble 2.2s ease-in-out infinite; /* 搞怪抖动 */
     }
+    @keyframes wobble{
+      0%,100%{transform:rotate(-1deg) scale(1)}
+      50%{transform:rotate(1deg) scale(1.03)}
+    }
+
     .subtitle{
       font-size:clamp(16px,2.8vw,20px);
       color:#444; margin:0 0 18px;
@@ -61,9 +75,11 @@
     button{
       appearance:none; border:none; cursor:pointer;
       padding:12px 18px; border-radius:999px;
-      background:#111; color:#fff; font-weight:600;
+      background:linear-gradient(90deg,#ff8ad6,#b28cff,#8ed5ff);
+      color:#fff; font-weight:800;
       transition: transform .08s ease, box-shadow .2s ease, opacity .2s ease;
-      box-shadow:0 8px 24px rgba(0,0,0,.18);
+      box-shadow:0 10px 24px rgba(0,0,0,.18), 0 0 0 3px rgba(255,255,255,.5) inset;
+      letter-spacing:.4px;
     }
     button.secondary{background:#fff; color:#111; border:1px solid #00000012}
     button:active{transform:translateY(1px)}
@@ -76,9 +92,9 @@
 </head>
 <body>
   <canvas id="confetti"></canvas>
+  <div aria-hidden="true" style="position:absolute;inset:auto 8% -24px auto;transform:rotate(-12deg);font-size:clamp(20px,4vw,28px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));">💥 永远滴神 💥</div>
   <main class="card" role="main" aria-labelledby="title">
-    <!-- ⬇️ 编辑这里：把 {{她的名字}} 改成你女朋友的名字 -->
-    <h1 id="title">生日快乐，<span class="name">{{她的名字}}</span>！🎂🎉</h1>
+    <h1 id="title">bb方，生日快乐！🎂💖</h1>
     <p class="subtitle">A little surprise at midnight ✨</p>
 
     <p class="msg">
@@ -174,3 +190,4 @@
   </script>
 </body>
 </html>
+
