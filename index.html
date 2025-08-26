@@ -32,8 +32,14 @@
       overflow:hidden;
     }
 
-    @keyframes bgMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-
+    @keyframes 
+      .bg{
+      width:100vw;               /* 用视口尺寸，避免因父元素计算产生拉伸 */
+      height:100vh;
+      object-fit:cover;          /* 保持比例并铺满屏幕（可能有轻微裁剪，不会失真） */
+      animation: spinIn 900ms ease-out 1 forwards;  /* 只播一次，结束后停在最终状态 */
+      transform-origin:center;
+    }
     .card{
       width:min(820px, 92vw);
       background:var(--card);
@@ -97,22 +103,17 @@
     <h1 id="title">bb方，生日快乐！🎂💖</h1>
     <p class="subtitle">A little surprise at midnight ✨</p>
 
-    <p class="msg">
-      今天是你的日子。愿新的一岁，健康、开心、被爱包围。<br>
-      谢谢你一路的陪伴，希望这份小小的网页能让你笑出来。
-    </p>
-
     <div class="buttons">
-      <button id="confettiBtn" aria-label="再放一次彩带">再放一次彩带 🎊</button>
-      <button class="secondary" id="revealBtn" aria-expanded="false">点我查看隐藏祝福 💌</button>
+      <button id="confettiBtn" aria-label="点我带上皇冠">点我带上皇冠 🎊</button>
+      <button class="secondary" id="revealBtn" aria-expanded="false">点我检阅bb方的所有称呼 💌</button>
     </div>
 
     <div id="hidden" class="msg" style="display:none">
-      无论未来我们去哪里，我都想和你一起看更多的日落、吃更多的好吃的、拍更多好笑的照片。爱你。❤️
+      让我们向：bb方，double方，funny方，芳妮方，方funny,方芳妮，方Q,方皮蛋，方Queen,方bb致以最热烈的生日祝贺！❤️
     </div>
 
     <div class="footer">
-      <span>— 来自某个把你放在心尖上的人</span>
+      <span>— 来自爱bb方的金毛</span>
     </div>
   </main>
 
@@ -190,4 +191,5 @@
   </script>
 </body>
 </html>
+
 
