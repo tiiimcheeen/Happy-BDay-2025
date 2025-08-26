@@ -30,8 +30,10 @@
     body::before{
       content:"";
       position:fixed; inset:0; z-index:-1;
-      background: url('bg.jpg') center/contain no-repeat;
-      animation: spinIn 900ms ease-out 1 both;
+      /* 居中偏下：Y 轴 68% 可微调为 60%~80% */
+      background: url('bg.jpg') center 68% / contain no-repeat;
+      /* 多圈顺时针旋转一次后静止 */
+      animation: spinIn 2.2s ease-out 1 both;
       transform-origin:center;
     }
 
@@ -43,7 +45,10 @@
     }
 
     @keyframes spinIn{
-      from{ transform:rotate(-8deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      /* 从 0 旋到 1440deg = 顺时针 4 圈，结束停住 */
+      from{ transform:rotate(0deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      to  { transform:rotate(1440deg) scale(1);    filter:none; }
+    }
       to  { transform:rotate(0deg)  scale(1);    filter:none; }
     }
 
@@ -56,6 +61,7 @@
       padding:28px 24px 22px;
       box-shadow: 0 18px 48px rgba(0,0,0,.22);
       text-align:center;
+      transform: translateY(-10vh); /* 内容整体上移，避免挡住人物 */
     }
     h1{
       font-family:"ZCOOL KuaiLe","Noto Serif SC", serif;
@@ -85,7 +91,7 @@
     button:active{transform:translateY(1px)}
     .footer{margin-top:16px;font-size:14px;color:#555}
     canvas#confetti{position:fixed;inset:0;z-index:0;pointer-events:none}
-    .sticker{position:absolute;inset:auto 8% -24px auto;transform:rotate(-12deg);font-size:clamp(20px,4vw,28px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));z-index:1;}
+    
   </style>
 </head>
 <body>
@@ -100,12 +106,12 @@
     </div>
 
     <div id="hidden" class="msg" style="display:none">
-      让我们向：bb方，double方，funny方，芳妮方，方funny，方芳妮，方Q，方皮蛋，方Queen，方bb 致以最热烈的生日祝贺！❤️
+      让我们向：bb方，double方，女王方，funny方，芳妮方，方funny，方芳妮，方Q，方皮蛋，方Queen，方bb，方女王，优秀b，香气b，美丽b 致以最热烈的生日祝贺！❤️
     </div>
 
     <div class="footer">— 来自爱bb方的金毛</div>
   </main>
-  <div class="sticker" aria-hidden="true">💥 永远滴神 💥</div>
+  
 
   <script>
     (function(){
