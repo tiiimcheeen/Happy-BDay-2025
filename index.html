@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>生日快乐！</title>
-  <meta name="description" content="给你的一份小小惊喜。生日快乐！" />
+  <title>bb方，生日快乐！</title>
+  <meta name="description" content="一份土味小惊喜，生日快乐！" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Noto+Serif+SC:wght@700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg1:#ffd1f3; /* 粉 */
@@ -22,174 +21,138 @@
     body{
       font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Helvetica Neue", Arial, "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji";
       display:grid; place-items:center;
-      /* 叠加樱花照 + 粉紫蓝渐变 */
-      background-image: linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3)), url('bg.jpg');
-      background-size: cover, 200% 200%;
-      background-position: center, 0% 50%;
-      background-attachment: fixed;
-      background-blend-mode: soft-light; /* 让色彩盖在照片上，字更清晰 */
-      animation: bgMove 12s ease-in-out infinite;
+      min-height:100svh;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
       overflow:hidden;
     }
 
-    @keyframes 
-      .bg{
-      width:100vw;               /* 用视口尺寸，避免因父元素计算产生拉伸 */
-      height:100vh;
-      object-fit:cover;          /* 保持比例并铺满屏幕（可能有轻微裁剪，不会失真） */
-      animation: spinIn 900ms ease-out 1 forwards;  /* 只播一次，结束后停在最终状态 */
+    /* 背景照片用伪元素：保持比例、居中；只旋转一次后静止 */
+    body::before{
+      content:"";
+      position:fixed; inset:0; z-index:-1;
+      background: url('bg.jpg') center/contain no-repeat;
+      animation: spinIn 900ms ease-out 1 both;
       transform-origin:center;
     }
+
+    /* 轻柔遮罩，避免文字被抢（可调透明度） */
+    body::after{
+      content:"";
+      position:fixed; inset:0; z-index:0;
+      background: linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,.15));
+    }
+
+    @keyframes spinIn{
+      from{ transform:rotate(-8deg) scale(1.02); filter:brightness(1.05) saturate(1.05); }
+      to  { transform:rotate(0deg)  scale(1);    filter:none; }
+    }
+
     .card{
+      position:relative; z-index:1;
       width:min(820px, 92vw);
       background:var(--card);
       backdrop-filter: blur(6px);
-      border-radius:28px;
-      padding:32px 28px 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.15);
-      position:relative;
-      z-index:2;
+      border-radius:24px;
+      padding:28px 24px 22px;
+      box-shadow: 0 18px 48px rgba(0,0,0,.22);
       text-align:center;
     }
     h1{
       font-family:"ZCOOL KuaiLe","Noto Serif SC", serif;
-      font-size: clamp(40px, 7vw, 72px);
-      margin:0 0 10px; color:#222;
-      letter-spacing:1px;
-      text-shadow: 0 3px 0 rgba(255,255,255,.7), 0 6px 18px rgba(255,77,203,.35);
-      animation: wobble 2.2s ease-in-out infinite; /* 搞怪抖动 */
+      font-size:clamp(40px,7vw,72px);
+      margin:0 0 10px;
+      color:#222;
+      text-shadow: 0 3px 0 rgba(255,255,255,.75), 0 6px 18px rgba(255,77,203,.35);
+      animation: wobble 2.2s ease-in-out infinite;
     }
     @keyframes wobble{
       0%,100%{transform:rotate(-1deg) scale(1)}
       50%{transform:rotate(1deg) scale(1.03)}
     }
-
-    .subtitle{
-      font-size:clamp(16px,2.8vw,20px);
-      color:#444; margin:0 0 18px;
-    }
-    .name{
-      font-weight:700; color:var(--accent);
-      text-shadow:0 2px 10px rgba(255,77,109,.35);
-    }
-    .msg{ 
-      font-size:clamp(15px,2.6vw,18px); 
-      line-height:1.7; color:#333; 
-      margin:14px auto 22px; max-width:62ch;
-    }
-    .buttons{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+    .subtitle{font-size:clamp(16px,2.8vw,20px);color:#444;margin:0 0 18px;}
+    .msg{font-size:clamp(15px,2.6vw,18px);line-height:1.7;color:#333;margin:14px auto 22px;max-width:62ch;}
+    .buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
     button{
-      appearance:none; border:none; cursor:pointer;
-      padding:12px 18px; border-radius:999px;
+      appearance:none;border:none;cursor:pointer;
+      padding:12px 18px;border-radius:999px;
       background:linear-gradient(90deg,#ff8ad6,#b28cff,#8ed5ff);
-      color:#fff; font-weight:800;
-      transition: transform .08s ease, box-shadow .2s ease, opacity .2s ease;
+      color:#fff;font-weight:800;
+      transition:transform .08s ease, box-shadow .2s ease, opacity .2s ease;
       box-shadow:0 10px 24px rgba(0,0,0,.18), 0 0 0 3px rgba(255,255,255,.5) inset;
       letter-spacing:.4px;
     }
-    button.secondary{background:#fff; color:#111; border:1px solid #00000012}
+    button.secondary{background:#fff;color:#111;border:1px solid #00000012}
     button:active{transform:translateY(1px)}
-    .footer{margin-top:16px; font-size:14px; color:#555}
-    .footer a{color:#222; text-underline-offset:3px}
-
-    /* 彩带画布 */
-    canvas#confetti{position:fixed; inset:0; z-index:1; pointer-events:none}
+    .footer{margin-top:16px;font-size:14px;color:#555}
+    canvas#confetti{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .sticker{position:absolute;inset:auto 8% -24px auto;transform:rotate(-12deg);font-size:clamp(20px,4vw,28px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));z-index:1;}
   </style>
 </head>
 <body>
   <canvas id="confetti"></canvas>
-  <div aria-hidden="true" style="position:absolute;inset:auto 8% -24px auto;transform:rotate(-12deg);font-size:clamp(20px,4vw,28px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));">💥 永远滴神 💥</div>
   <main class="card" role="main" aria-labelledby="title">
     <h1 id="title">bb方，生日快乐！🎂💖</h1>
     <p class="subtitle">A little surprise at midnight ✨</p>
 
     <div class="buttons">
-      <button id="confettiBtn" aria-label="点我带上皇冠">点我带上皇冠 🎊</button>
+      <button id="confettiBtn" aria-label="点我放彩带">点我放彩带 🎊</button>
       <button class="secondary" id="revealBtn" aria-expanded="false">点我检阅bb方的所有称呼 💌</button>
     </div>
 
     <div id="hidden" class="msg" style="display:none">
-      让我们向：bb方，double方，funny方，芳妮方，方funny,方芳妮，方Q,方皮蛋，方Queen,方bb致以最热烈的生日祝贺！❤️
+      让我们向：bb方，double方，funny方，芳妮方，方funny，方芳妮，方Q，方皮蛋，方Queen，方bb 致以最热烈的生日祝贺！❤️
     </div>
 
-    <div class="footer">
-      <span>— 来自爱bb方的金毛</span>
-    </div>
+    <div class="footer">— 来自爱bb方的金毛</div>
   </main>
+  <div class="sticker" aria-hidden="true">💥 永远滴神 💥</div>
 
   <script>
-    // 简易彩带动画（无外部依赖）
     (function(){
       const canvas = document.getElementById('confetti');
       const ctx = canvas.getContext('2d');
-      let W, H, particles = [], animId, running=false;
-      const colors = ['#ff4d6d','#ffd166','#4cc9f0','#bdb2ff','#06d6a0'];
+      let W, H, particles = [], running=false;
+      const colors = ['#ff4dff','#b366ff','#66b3ff','#ff99cc'];
 
-      function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
       window.addEventListener('resize', resize, {passive:true}); resize();
 
-      function spawn(n=180){
-        particles = [];
+      function spawn(n=160){
+        particles=[];
         for(let i=0;i<n;i++){
           particles.push({
-            x: Math.random()*W,
-            y: -20 - Math.random()*H*0.3,
-            r: 6 + Math.random()*8,
-            color: colors[Math.floor(Math.random()*colors.length)],
-            tilt: Math.random()*10,
-            tiltSpeed: (Math.random()*2+0.5)*(Math.random()<.5?-1:1),
-            vx: -2 + Math.random()*4,
-            vy: 2 + Math.random()*3 + Math.random()*2,
-            life: 0,
-            shape: Math.random()<0.5?'circle':'rect'
+            x:Math.random()*W,
+            y:-20-Math.random()*H*0.3,
+            r:6+Math.random()*8,
+            color:colors[Math.floor(Math.random()*colors.length)],
+            vx:-2+Math.random()*4,
+            vy:2+Math.random()*4,
+            life:0
           });
         }
       }
-
       function draw(){
         ctx.clearRect(0,0,W,H);
         particles.forEach(p=>{
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.tilt * Math.PI/180);
-          ctx.fillStyle = p.color;
-          if(p.shape==='circle'){
-            ctx.beginPath(); ctx.arc(0,0,p.r,0,Math.PI*2); ctx.fill();
-          }else{
-            ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
-          }
-          ctx.restore();
-
-          p.x += p.vx + Math.sin(p.life/10)*0.4;
-          p.y += p.vy;
-          p.tilt += p.tiltSpeed;
-          p.life++;
+          ctx.fillStyle=p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+          p.x+=p.vx; p.y+=p.vy; p.life++;
         });
-        particles = particles.filter(p=> p.y < H + 30);
-        if(particles.length && running){ animId = requestAnimationFrame(draw); }
-        else running=false;
+        particles = particles.filter(p=>p.y < H + 30);
+        if(particles.length && running){ requestAnimationFrame(draw); } else { running=false; }
       }
-
-      function burst(){
-        spawn();
-        if(!running){ running=true; draw(); }
-      }
-
-      // 初始自动放一次
+      function burst(){ spawn(); if(!running){ running=true; draw(); } }
       window.addEventListener('load', burst);
       document.getElementById('confettiBtn').addEventListener('click', burst);
 
-      // 隐藏祝福
       const revealBtn = document.getElementById('revealBtn');
       const hidden = document.getElementById('hidden');
       revealBtn.addEventListener('click', ()=>{
         const shown = hidden.style.display !== 'none';
-        hidden.style.display = shown? 'none' : 'block';
+        hidden.style.display = shown ? 'none' : 'block';
         revealBtn.setAttribute('aria-expanded', String(!shown));
       });
     })();
   </script>
 </body>
 </html>
-
-
