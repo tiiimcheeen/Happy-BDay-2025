@@ -17,7 +17,7 @@
       --accent:#ff4dcb; /* 亮粉 */
       /* 皇冠位置/大小（可根据屏幕微调） */
       --crown-x: 47vw;    /* 越大越靠右 */
-      --crown-y: 14dvh;    /* 越大越靠下 */
+      --crown-y: 14dvh;   /* 越大越靠下 */
       --crown-size: clamp(120px, 15vw, 210px);
     }
     *{box-sizing:border-box}
@@ -79,11 +79,13 @@
     button:active{transform:translateY(1px)}
 
     /* 皇冠（透明 SVG） */
-    #crown{ position:fixed; left:var(--crown-x); top:-20vh; transform:translateX(-50%);
+    #crown{ position:fixed; left:var(--crown-x); top:-20vh; transform: translateX(-50%) rotate(-7deg);
       width:var(--crown-size); height:auto; opacity:0; z-index:6; pointer-events:none;
-      filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); 
-      transform: translateX(-50%) rotate(-7deg);}
+      filter:drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
     #crown svg{ display:block; width:100%; height:auto; }
+
+    /* 彩带画布（置顶显示，不拦截点击） */
+    canvas#confetti{ position:fixed; inset:0; z-index:7; pointer-events:none; }
 
     @media (max-aspect-ratio: 3/4){
       :root{ --crown-y:14dvh; --crown-x:47vw; }
@@ -104,6 +106,9 @@
     </svg>
   </div>
 
+  <!-- 彩带画布 -->
+  <canvas id="confetti"></canvas>
+
   <main class="card" role="main" aria-labelledby="title">
     <h1 id="title"> bb方，生日快乐！🎂</h1>
     <div class="buttons">
@@ -111,7 +116,7 @@
       <button class="secondary" id="revealBtn" aria-expanded="false">点我展示bb方的所有称号 😚</button>
     </div>
 
-    <!-- 祝福与署名：默认隐藏，点击“检阅称呼”后显示 -->
+    <!-- 祝福与署名：默认隐藏，点击“检阅称号”后显示 -->
     <div id="hidden" class="msg" style="display:none; text-align:center; color:#222; text-shadow:0 2px 6px rgba(0,0,0,.5);">
       💖 让我们向：💖<br>
       <strong>bb方</strong>， <strong>double方</strong>， <strong>女王方</strong>， <strong>funny方</strong>， <strong>芳妮方</strong>， <strong>方funny</strong>， <strong>方芳妮</strong>， <strong>方Q</strong>， <strong>方皮蛋</strong>， <strong>方Queen</strong>， <strong>方bb</strong>， <strong>方女王</strong>， <strong>优秀b</strong>， <strong>香气b</strong>， <strong>美丽b</strong><br>
@@ -122,33 +127,81 @@
 
   <script>
     (function(){
-      // —— 皇冠掉落 ——
+      // ========== 彩带 ==========
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      const COLORS = ['#ff4dff','#b366ff','#66b3ff','#ff99cc','#ffd166'];
+      let W, H, parts = [], running = false;
+
+      function resize(){
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize, { passive:true });
+      resize();
+
+      function spawn(n=220){
+        for(let i=0;i<n;i++){
+          parts.push({
+            x: Math.random()*W,
+            y: -20 - Math.random()*H*0.2,
+            r: 4 + Math.random()*6,
+            vx: -2 + Math.random()*4,
+            vy: 2 + Math.random()*4,
+            color: COLORS[Math.floor(Math.random()*COLORS.length)],
+          });
+        }
+      }
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        for(const p of parts){
+          ctx.fillStyle = p.color;
+          ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+          p.x += p.vx; p.y += p.vy; p.vy += 0.02; // 轻微重力
+        }
+        parts = parts.filter(p => p.y < H + 20);
+        if(parts.length){ requestAnimationFrame(draw); } else { running = false; }
+      }
+      function burst(){
+        spawn(220);
+        if(!running){ running = true; requestAnimationFrame(draw); }
+      }
+
+      // ========== 皇冠掉落 ==========
       const crownBtn = document.getElementById('confettiBtn');
       const crown = document.getElementById('crown');
+
       function cssVar(name, fallback){
         const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
         return v || fallback;
       }
+
       function dropCrown(){
         crown.style.transition='none';
         crown.style.top='-20vh';
         crown.style.opacity='0';
         void crown.offsetWidth; // 强制重绘
+
         crown.style.left = cssVar('--crown-x','50vw');
         crown.style.transition='top 1.1s cubic-bezier(.2,.8,.2,1), opacity .5s ease-in';
         crown.style.top = cssVar('--crown-y','40vh');
         crown.style.opacity='1';
-        crown.addEventListener('transitionend',()=>{
+
+        const onEnd = (e)=>{
+          if(e.propertyName !== 'top') return; // 只在落到位那一刻
+          crown.removeEventListener('transitionend', onEnd);
+          burst(); // ✨ 同步放彩带
           crown.animate([
             { transform:'translateX(-50%) translateY(0) rotate(-7deg)' },
             { transform:'translateX(-50%) translateY(-6px) rotate(-13deg)' },
             { transform:'translateX(-50%) translateY(0) rotate(-7deg)' }
           ], { duration: 450, easing:'ease-in-out' });
-        }, { once:true });
+        };
+        crown.addEventListener('transitionend', onEnd);
       }
       crownBtn.addEventListener('click', dropCrown);
 
-      // —— 展开/收起称呼（含署名） ——
+      // ========== 展开/收起称号（含署名） ==========
       const revealBtn = document.getElementById('revealBtn');
       const hidden = document.getElementById('hidden');
       revealBtn.addEventListener('click', ()=>{
@@ -160,10 +213,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
